@@ -7,7 +7,7 @@ import { structure } from "./structure";
 export default defineConfig({
   name: "acm-hotels",
   title: "ACM Hotels",
-  projectId: "skdlufghe66k2twbxmy2l1ii",
+  projectId: "lie9x16i",
   dataset: "production",
   plugins: [structureTool({ structure }), visionTool()],
   schema: {

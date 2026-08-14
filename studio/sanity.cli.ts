@@ -4,7 +4,10 @@ import { defineCliConfig } from "sanity/cli";
 // repo root (NEXT_PUBLIC_SANITY_PROJECT_ID / NEXT_PUBLIC_SANITY_DATASET).
 export default defineCliConfig({
   api: {
-    projectId: "skdlufghe66k2twbxmy2l1ii",
+    projectId: "lie9x16i",
     dataset: "production",
+  },
+  deployment: {
+    appId: "nsrpmsczoryvbseiott7emvs",
   },
 });

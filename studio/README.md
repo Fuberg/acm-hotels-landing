@@ -1,8 +1,7 @@
 # ACM Hotels — Sanity Studio
 
 Schema and admin UI for the ACM Hotels site's content (Sanity project
-`skdlufghe66k2twbxmy2l1ii`, dataset `production` — see
-`/docs/infrastructure.md`).
+`lie9x16i`, dataset `production` — see `/docs/infrastructure.md`).
 
 ## Local development
 
@@ -21,6 +20,6 @@ npx sanity login
 npm run deploy
 ```
 
-This publishes the Studio to `https://acm-hotels.sanity.studio` (or prompts
-for a hostname on first deploy). Admins use that URL to edit content — see
-`docs/agents/domain.md` for who "Admin" refers to.
+This publishes the Studio to https://acm-hotels.sanity.studio. Admins use
+that URL to edit content — see `docs/agents/domain.md` for who "Admin"
+refers to.

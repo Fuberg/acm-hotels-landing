@@ -7,8 +7,16 @@ this file or in git. Provisioned by `scripts/provision-acm-hotels-deploy.sh`
 
 ## Sanity
 
-- Project ID: `skdlufghe66k2twbxmy2l1ii`
+- Project ID: `lie9x16i` (display name "ACM hotels" — supersedes an earlier
+  `skdlufghe66k2twbxmy2l1ii` project the owner no longer had a token for;
+  corrected while implementing issue #6)
 - Dataset: `production`
+- Studio: hosted at `https://acm-hotels.sanity.studio` (deployed via
+  `studio/`, see `studio/README.md`) — this is where an Admin edits content.
+- Revalidation webhook: configured in the Sanity project (API → Webhooks) to
+  POST to `https://partners.acm-hotels.ru/api/revalidate` on
+  create/update/delete, signed with the `SANITY_REVALIDATE_SECRET` GitHub
+  Actions secret (issue #6).
 
 ## Deploy server (Beget)
 
