@@ -1,0 +1,29 @@
+.group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-label), ui-monospace, monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.link {
+  color: var(--color-slate);
+  text-decoration: none;
+  padding: var(--space-sm);
+}
+
+.link[aria-current="page"] {
+  color: var(--color-ink);
+}
+
+.link:hover,
+.link:focus-visible {
+  color: var(--color-ink);
+}
+
+.separator {
+  color: var(--color-hairline);
+}

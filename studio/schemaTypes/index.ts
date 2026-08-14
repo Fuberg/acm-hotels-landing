@@ -2,6 +2,7 @@ import contacts from "./contacts";
 import cooperationModelCard from "./cooperationModelCard";
 import expansionBand from "./expansionBand";
 import hero from "./hero";
+import lead from "./lead";
 import { localeString, localeText } from "./localeField";
 import navigation from "./navigation";
 import operatorBaseCard from "./operatorBaseCard";
@@ -21,4 +22,5 @@ export const schemaTypes = [
   property,
   cooperationModelCard,
   operatorBaseCard,
+  lead,
 ];

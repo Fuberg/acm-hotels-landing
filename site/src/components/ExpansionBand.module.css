@@ -1,0 +1,49 @@
+.section {
+  padding-block: var(--space-section);
+  background-color: var(--color-harbor-teal);
+  color: var(--color-cream);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+.heading {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  color: var(--color-cream);
+  max-width: 24ch;
+}
+
+.periods {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.period {
+  border: 1px solid rgba(251, 250, 247, 0.25);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+}
+
+.periodLabel {
+  font-family: var(--font-label), ui-monospace, monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(251, 250, 247, 0.7);
+  margin-bottom: var(--space-sm);
+}
+
+.periodDescription {
+  color: var(--color-cream);
+}
+
+@media (max-width: 767px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,9 @@
+.section {
+  padding-block: var(--space-lg);
+}
+
+.footnote {
+  font-size: 0.9375rem;
+  color: var(--color-slate);
+  max-width: 50ch;
+}

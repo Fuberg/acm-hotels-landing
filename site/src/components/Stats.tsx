@@ -1,18 +1,15 @@
-"use client";
-
-import { useLocale } from "@/lib/locale";
+import type { Locale } from "@/lib/locale";
 import type { StatItem } from "@/lib/sanity/siteContent";
+import styles from "./Stats.module.css";
 
-export function Stats({ stats }: { stats: StatItem[] }) {
-  const { locale } = useLocale();
-
+export function Stats({ stats, locale }: { stats: StatItem[]; locale: Locale }) {
   return (
-    <section aria-label="Показатели">
-      <ul>
+    <section className={styles.section} aria-label="Показатели">
+      <ul className={`${styles.list} container`}>
         {stats.map((stat) => (
-          <li key={stat._key}>
-            <p>{stat.value}</p>
-            <p>{stat.caption[locale]}</p>
+          <li key={stat._key} className={styles.item}>
+            <p className={styles.value}>{stat.value}</p>
+            <p className={styles.caption}>{stat.caption[locale]}</p>
           </li>
         ))}
       </ul>

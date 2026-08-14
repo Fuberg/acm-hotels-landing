@@ -1,8 +1,6 @@
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { LocaleProvider } from "@/lib/locale";
 import type { PropertiesContent } from "@/lib/sanity/siteContent";
-import { LocaleSwitcher } from "./LocaleSwitcher";
 import { Properties } from "./Properties";
 
 // The existing test setup doesn't wire up global auto-cleanup (no `globals:
@@ -54,11 +52,7 @@ const propertiesFixture: PropertiesContent = {
 
 describe("Properties", () => {
   it("renders Portfolio and Pipeline as visually distinct groups, given a SiteContent fixture", () => {
-    render(
-      <LocaleProvider>
-        <Properties properties={propertiesFixture} />
-      </LocaleProvider>,
-    );
+    render(<Properties properties={propertiesFixture} locale="ru" />);
 
     const portfolioGroup = screen.getByRole("list", { name: "Портфель" });
     const pipelineGroup = screen.getByRole("list", { name: "В разработке" });
@@ -73,11 +67,7 @@ describe("Properties", () => {
   });
 
   it("preserves the given order within each group", () => {
-    render(
-      <LocaleProvider>
-        <Properties properties={propertiesFixture} />
-      </LocaleProvider>,
-    );
+    render(<Properties properties={propertiesFixture} locale="ru" />);
 
     const portfolioGroup = screen.getByRole("list", { name: "Портфель" });
     const names = within(portfolioGroup)
@@ -88,11 +78,7 @@ describe("Properties", () => {
   });
 
   it("marks each card's status distinctly for Portfolio vs. Pipeline", () => {
-    render(
-      <LocaleProvider>
-        <Properties properties={propertiesFixture} />
-      </LocaleProvider>,
-    );
+    render(<Properties properties={propertiesFixture} locale="ru" />);
 
     const anapaCard = screen.getByText("Отель Анапа").closest("[data-property-status]");
     const greenwichCard = screen.getByText("Гринвич").closest("[data-property-status]");
@@ -102,11 +88,7 @@ describe("Properties", () => {
   });
 
   it("falls back to a status-appropriate placeholder when no photo is uploaded yet", () => {
-    render(
-      <LocaleProvider>
-        <Properties properties={propertiesFixture} />
-      </LocaleProvider>,
-    );
+    render(<Properties properties={propertiesFixture} locale="ru" />);
 
     // Sochi (portfolio, no image) and Greenwich (pipeline, no image) both get
     // a placeholder, but DESIGN.md distinguishes them: sage for an existing
@@ -123,11 +105,7 @@ describe("Properties", () => {
   });
 
   it("renders the uploaded photo in place of the placeholder once a property has an image", () => {
-    render(
-      <LocaleProvider>
-        <Properties properties={propertiesFixture} />
-      </LocaleProvider>,
-    );
+    render(<Properties properties={propertiesFixture} locale="ru" />);
 
     // Anapa (portfolio, image set) gets the real photo, not the placeholder.
     // The alt text deliberately differs from the property's name, so this
@@ -140,15 +118,8 @@ describe("Properties", () => {
     expect(anapaCard.querySelector(".property-placeholder")).not.toBeInTheDocument();
   });
 
-  it("renders the English copy once the locale switcher is set to EN", () => {
-    render(
-      <LocaleProvider>
-        <LocaleSwitcher />
-        <Properties properties={propertiesFixture} />
-      </LocaleProvider>,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "EN" }));
+  it("renders the English copy when locale is en", () => {
+    render(<Properties properties={propertiesFixture} locale="en" />);
 
     expect(screen.getByRole("list", { name: "Portfolio" })).toBeInTheDocument();
     expect(screen.getByRole("list", { name: "Pipeline" })).toBeInTheDocument();
@@ -158,11 +129,7 @@ describe("Properties", () => {
   });
 
   it("renders a Portfolio property's star rating when set, per issue #1 story 11", () => {
-    render(
-      <LocaleProvider>
-        <Properties properties={propertiesFixture} />
-      </LocaleProvider>,
-    );
+    render(<Properties properties={propertiesFixture} locale="ru" />);
 
     const sochiCard = screen.getByText("Отель Сочи").closest("[data-property-status]") as HTMLElement;
     expect(within(sochiCard).getByText("★★★★")).toBeInTheDocument();
@@ -173,36 +140,21 @@ describe("Properties", () => {
   });
 
   it("renders a Pipeline property's expected opening when set, per issue #1 story 12", () => {
-    render(
-      <LocaleProvider>
-        <Properties properties={propertiesFixture} />
-      </LocaleProvider>,
-    );
+    render(<Properties properties={propertiesFixture} locale="ru" />);
 
     const greenwichCard = screen.getByText("Гринвич").closest("[data-property-status]") as HTMLElement;
     expect(within(greenwichCard).getByText("Открытие: 2027 год")).toBeInTheDocument();
   });
 
-  it("renders the expected opening's English copy once the locale switcher is set to EN", () => {
-    render(
-      <LocaleProvider>
-        <LocaleSwitcher />
-        <Properties properties={propertiesFixture} />
-      </LocaleProvider>,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "EN" }));
+  it("renders the expected opening's English copy when locale is en", () => {
+    render(<Properties properties={propertiesFixture} locale="en" />);
 
     const greenwichCard = screen.getByText("Greenwich").closest("[data-property-status]") as HTMLElement;
     expect(within(greenwichCard).getByText("Opening: 2027")).toBeInTheDocument();
   });
 
   it("renders an empty group without error when a status has no properties yet", () => {
-    render(
-      <LocaleProvider>
-        <Properties properties={{ portfolio: [], pipeline: propertiesFixture.pipeline }} />
-      </LocaleProvider>,
-    );
+    render(<Properties properties={{ portfolio: [], pipeline: propertiesFixture.pipeline }} locale="ru" />);
 
     expect(within(screen.getByRole("list", { name: "Портфель" })).queryAllByRole("heading")).toHaveLength(0);
     expect(screen.getByText("Гринвич")).toBeInTheDocument();

@@ -1,0 +1,53 @@
+.hero {
+  padding-block: var(--space-xl) var(--space-section);
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-xl);
+}
+
+.eyebrow {
+  font-family: var(--font-label), ui-monospace, monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-slate);
+  margin-bottom: var(--space-md);
+}
+
+.headline {
+  font-size: clamp(2.25rem, 4vw, 3.25rem);
+  max-width: 20ch;
+  margin-bottom: var(--space-lg);
+}
+
+.supportingCopy {
+  font-size: 1.125rem;
+  color: var(--color-slate);
+  max-width: 60ch;
+  margin-bottom: var(--space-xl);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.primaryCta {
+  composes: primary from "./Button.module.css";
+}
+
+.secondaryCta {
+  composes: secondary from "./Button.module.css";
+}
+
+.image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+}

@@ -1,8 +1,6 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { LocaleProvider } from "@/lib/locale";
 import type { SiteContent } from "@/lib/sanity/siteContent";
-import { LocaleSwitcher } from "./LocaleSwitcher";
 import { Nav } from "./Nav";
 
 // Fed through the SiteContent seam (not a bare NavigationContent object) —
@@ -51,12 +49,8 @@ const siteContentFixture: SiteContent = {
 };
 
 describe("Nav", () => {
-  it("renders every nav link with its Russian label by default", () => {
-    render(
-      <LocaleProvider>
-        <Nav navigation={siteContentFixture.navigation} />
-      </LocaleProvider>,
-    );
+  it("renders every nav link with its Russian label when locale is ru", () => {
+    render(<Nav navigation={siteContentFixture.navigation} phone={siteContentFixture.contacts.phone} locale="ru" />);
 
     const { navigation } = siteContentFixture;
     expect(screen.getByRole("link", { name: navigation.services.ru })).toBeInTheDocument();
@@ -65,20 +59,32 @@ describe("Nav", () => {
     expect(screen.getByRole("link", { name: navigation.contacts.ru })).toBeInTheDocument();
   });
 
-  it("renders every nav link with its English label once the locale switcher is set to EN", () => {
-    render(
-      <LocaleProvider>
-        <LocaleSwitcher />
-        <Nav navigation={siteContentFixture.navigation} />
-      </LocaleProvider>,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "EN" }));
+  it("renders every nav link with its English label when locale is en", () => {
+    render(<Nav navigation={siteContentFixture.navigation} phone={siteContentFixture.contacts.phone} locale="en" />);
 
     const { navigation } = siteContentFixture;
     expect(screen.getByRole("link", { name: navigation.services.en })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: navigation.portfolio.en })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: navigation.approach.en })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: navigation.contacts.en })).toBeInTheDocument();
+  });
+
+  it("points every nav link at a real in-page section id", () => {
+    render(<Nav navigation={siteContentFixture.navigation} phone={siteContentFixture.contacts.phone} locale="ru" />);
+
+    const { navigation } = siteContentFixture;
+    expect(screen.getByRole("link", { name: navigation.services.ru })).toHaveAttribute("href", "#services");
+    expect(screen.getByRole("link", { name: navigation.portfolio.ru })).toHaveAttribute("href", "#portfolio");
+    expect(screen.getByRole("link", { name: navigation.approach.ru })).toHaveAttribute("href", "#approach");
+    expect(screen.getByRole("link", { name: navigation.contacts.ru })).toHaveAttribute("href", "#contacts");
+  });
+
+  it("renders the phone number linked as a tel: URL", () => {
+    render(<Nav navigation={siteContentFixture.navigation} phone={siteContentFixture.contacts.phone} locale="ru" />);
+
+    expect(screen.getByRole("link", { name: siteContentFixture.contacts.phone })).toHaveAttribute(
+      "href",
+      `tel:${siteContentFixture.contacts.phone}`,
+    );
   });
 });

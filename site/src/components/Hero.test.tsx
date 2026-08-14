@@ -1,9 +1,7 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { LocaleProvider } from "@/lib/locale";
 import type { SiteContent } from "@/lib/sanity/siteContent";
 import { Hero } from "./Hero";
-import { LocaleSwitcher } from "./LocaleSwitcher";
 
 // Fed through the SiteContent seam (not a bare HeroContent object) — the
 // pattern every later block's rendering test reuses, per issue #1's
@@ -61,12 +59,8 @@ const siteContentFixture: SiteContent = {
 };
 
 describe("Hero", () => {
-  it("renders the Russian copy by default, given a SiteContent fixture", () => {
-    render(
-      <LocaleProvider>
-        <Hero hero={siteContentFixture.hero} />
-      </LocaleProvider>,
-    );
+  it("renders the Russian copy when locale is ru", () => {
+    render(<Hero hero={siteContentFixture.hero} locale="ru" />);
 
     const { hero } = siteContentFixture;
     expect(screen.getByRole("heading", { name: hero.headline.ru })).toBeInTheDocument();
@@ -75,15 +69,8 @@ describe("Hero", () => {
     expect(screen.getByAltText(hero.image!.alt!.ru)).toBeInTheDocument();
   });
 
-  it("renders the English copy once the locale switcher is set to EN", () => {
-    render(
-      <LocaleProvider>
-        <LocaleSwitcher />
-        <Hero hero={siteContentFixture.hero} />
-      </LocaleProvider>,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "EN" }));
+  it("renders the English copy when locale is en", () => {
+    render(<Hero hero={siteContentFixture.hero} locale="en" />);
 
     const { hero } = siteContentFixture;
     expect(screen.getByRole("heading", { name: hero.headline.en })).toBeInTheDocument();
@@ -97,11 +84,7 @@ describe("Hero", () => {
       ...siteContentFixture,
       hero: { ...siteContentFixture.hero, image: { ...siteContentFixture.hero.image!, alt: null } },
     };
-    render(
-      <LocaleProvider>
-        <Hero hero={siteContent.hero} />
-      </LocaleProvider>,
-    );
+    render(<Hero hero={siteContent.hero} locale="ru" />);
 
     expect(screen.getByAltText("")).toBeInTheDocument();
   });
@@ -111,11 +94,7 @@ describe("Hero", () => {
       ...siteContentFixture,
       hero: { ...siteContentFixture.hero, image: null },
     };
-    render(
-      <LocaleProvider>
-        <Hero hero={siteContent.hero} />
-      </LocaleProvider>,
-    );
+    render(<Hero hero={siteContent.hero} locale="ru" />);
 
     const { hero } = siteContent;
     expect(screen.getByRole("img", { name: hero.headline.ru })).toHaveClass("hero-placeholder");

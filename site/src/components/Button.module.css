@@ -1,0 +1,47 @@
+/* Shared button treatment (DESIGN.md's Components → Buttons), composed into
+   each component's own module instead of duplicated per call site. */
+
+.primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 16px 28px;
+  background-color: var(--color-harbor-teal);
+  color: var(--color-cream);
+  font-family: var(--font-body), sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.primary:hover,
+.primary:focus-visible {
+  background-color: var(--color-ink);
+}
+
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-sm);
+  padding: 16px 28px;
+  background-color: transparent;
+  color: var(--color-harbor-teal);
+  font-family: var(--font-body), sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.secondary:hover,
+.secondary:focus-visible {
+  color: var(--color-ink);
+  border-color: var(--color-ink);
+}

@@ -1,12 +1,11 @@
-"use client";
-
 import Image from "next/image";
-import { useLocale } from "@/lib/locale";
+import type { Locale } from "@/lib/locale";
 import {
   PROPERTY_IMAGE_DIMENSIONS,
   type PropertiesContent,
   type PropertyContent,
 } from "@/lib/sanity/siteContent";
+import styles from "./Properties.module.css";
 
 const GROUP_LABELS = {
   portfolio: { ru: "Портфель", en: "Portfolio" },
@@ -24,14 +23,14 @@ const STAR_RATING_LABEL = {
 
 const EXPECTED_OPENING_LABEL = { ru: "Открытие", en: "Opening" };
 
-function PropertyCard({ property }: { property: PropertyContent }) {
-  const { locale } = useLocale();
+function PropertyCard({ property, locale }: { property: PropertyContent; locale: Locale }) {
   const name = property.name[locale];
 
   return (
-    <li data-property-status={property.status}>
+    <li className={styles.card} data-property-status={property.status}>
       {property.image ? (
         <Image
+          className={styles.photo}
           src={property.image.url}
           alt={property.image.alt?.[locale] ?? ""}
           width={PROPERTY_IMAGE_DIMENSIONS.width}
@@ -45,49 +44,60 @@ function PropertyCard({ property }: { property: PropertyContent }) {
         <div
           role="img"
           aria-label={name}
-          className={`property-placeholder property-placeholder--${property.status}`}
+          className={`${styles.photo} property-placeholder property-placeholder--${property.status}`}
         />
       )}
-      <h3>{name}</h3>
-      <p>{property.description[locale]}</p>
-      {property.starRating ? (
-        <p aria-label={STAR_RATING_LABEL[locale](property.starRating)}>
-          {"★".repeat(property.starRating)}
-        </p>
-      ) : null}
-      {property.expectedOpening ? (
-        <p>
-          {EXPECTED_OPENING_LABEL[locale]}: {property.expectedOpening[locale]}
-        </p>
-      ) : null}
+      <div className={styles.cardBody}>
+        <h4 className={styles.name}>{name}</h4>
+        <p className={styles.description}>{property.description[locale]}</p>
+        {property.starRating ? (
+          <p className={styles.stars} aria-label={STAR_RATING_LABEL[locale](property.starRating)}>
+            {"★".repeat(property.starRating)}
+          </p>
+        ) : null}
+        {property.expectedOpening ? (
+          <p className={styles.opening}>
+            {EXPECTED_OPENING_LABEL[locale]}: {property.expectedOpening[locale]}
+          </p>
+        ) : null}
+      </div>
     </li>
   );
 }
 
-function PropertyGroup({ status, properties }: { status: keyof PropertiesContent; properties: PropertyContent[] }) {
-  const { locale } = useLocale();
+function PropertyGroup({
+  status,
+  properties,
+  locale,
+}: {
+  status: keyof PropertiesContent;
+  properties: PropertyContent[];
+  locale: Locale;
+}) {
   const label = GROUP_LABELS[status][locale];
 
   return (
-    <div>
-      <h3>{label}</h3>
-      <ul aria-label={label}>
+    <div className={styles.group}>
+      <h3 className={styles.groupLabel}>{label}</h3>
+      <ul className={styles.grid} aria-label={label}>
         {properties.map((property) => (
-          <PropertyCard key={property._id} property={property} />
+          <PropertyCard key={property._id} property={property} locale={locale} />
         ))}
       </ul>
     </div>
   );
 }
 
-export function Properties({ properties }: { properties: PropertiesContent }) {
-  const { locale } = useLocale();
-
+export function Properties({ properties, locale }: { properties: PropertiesContent; locale: Locale }) {
   return (
-    <section aria-labelledby="properties-headline">
-      <h2 id="properties-headline">{SECTION_HEADLINE[locale]}</h2>
-      <PropertyGroup status="portfolio" properties={properties.portfolio} />
-      <PropertyGroup status="pipeline" properties={properties.pipeline} />
+    <section id="portfolio" className={styles.section} aria-labelledby="properties-headline">
+      <div className="container">
+        <h2 id="properties-headline" className={styles.heading}>
+          {SECTION_HEADLINE[locale]}
+        </h2>
+        <PropertyGroup status="portfolio" properties={properties.portfolio} locale={locale} />
+        <PropertyGroup status="pipeline" properties={properties.pipeline} locale={locale} />
+      </div>
     </section>
   );
 }

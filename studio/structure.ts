@@ -71,4 +71,14 @@ export const structure: StructureResolver = (S) =>
             .title("Объекты")
             .defaultOrdering([{ field: "order", direction: "asc" }]),
         ),
+      // Also not a singleton: one document per inquiry submitted through the
+      // public site's lead form (POST /api/leads), newest first for triage.
+      S.listItem()
+        .title("Заявки")
+        .id("lead")
+        .child(
+          S.documentTypeList("lead")
+            .title("Заявки")
+            .defaultOrdering([{ field: "_createdAt", direction: "desc" }]),
+        ),
     ]);

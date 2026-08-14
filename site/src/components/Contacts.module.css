@@ -1,0 +1,52 @@
+.section {
+  padding-block: var(--space-section);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: var(--space-xl);
+}
+
+.heading {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  margin-bottom: var(--space-lg);
+}
+
+.channels {
+  list-style: none;
+  display: grid;
+  gap: var(--space-md);
+  align-content: start;
+}
+
+.channels a {
+  display: inline-block;
+  font-size: 1.0625rem;
+  color: var(--color-slate);
+  text-decoration: none;
+  padding-block: var(--space-sm);
+}
+
+.channels a:hover,
+.channels a:focus-visible {
+  color: var(--color-harbor-teal);
+}
+
+.formCard {
+  background-color: var(--color-surface-white);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-md);
+  padding: 32px;
+}
+
+.formHeading {
+  font-size: 1.25rem;
+  margin-bottom: var(--space-lg);
+}
+
+@media (max-width: 767px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

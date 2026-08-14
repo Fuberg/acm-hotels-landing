@@ -17,6 +17,11 @@ on:
 # anonymous-read grant can't see documents whose _id contains a "." (e.g.
 # "cooperationModel.management"), so the server-side Sanity client needs an
 # authenticated read to see those — see docs/infrastructure.md.
+# secrets.SANITY_LEADS_WRITE_TOKEN is a separate, narrower-scoped token
+# (Editor role, Create permission only) that POST /api/leads uses to write
+# lead-form submissions as `lead` documents. Deliberately not the same token
+# as SANITY_API_TOKEN, so a leaked read token can never be used to write
+# data. Without it, the lead form fails closed with a 500, not silently.
 env:
   # vars.DOMAIN is set by scripts/provision-acm-hotels-deploy.sh (stage 5);
   # the literal fallback only covers a run before that's ever been done.
@@ -67,16 +72,18 @@ jobs:
           host: ${{ vars.SSH_HOST }}
           username: ${{ vars.SSH_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
-          envs: SANITY_REVALIDATE_SECRET,SANITY_API_TOKEN
+          envs: SANITY_REVALIDATE_SECRET,SANITY_API_TOKEN,SANITY_LEADS_WRITE_TOKEN
           script: |
             cd /opt/acm-hotels
             echo "SANITY_REVALIDATE_SECRET=${SANITY_REVALIDATE_SECRET}" > .env
             echo "SANITY_API_TOKEN=${SANITY_API_TOKEN}" >> .env
+            echo "SANITY_LEADS_WRITE_TOKEN=${SANITY_LEADS_WRITE_TOKEN}" >> .env
             sudo docker compose pull
             sudo docker compose up -d --remove-orphans
         env:
           SANITY_REVALIDATE_SECRET: ${{ secrets.SANITY_REVALIDATE_SECRET }}
           SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+          SANITY_LEADS_WRITE_TOKEN: ${{ secrets.SANITY_LEADS_WRITE_TOKEN }}
 
   verify:
     needs: deploy

@@ -1,0 +1,117 @@
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--color-cream);
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  padding-block: var(--space-md);
+}
+
+.wordmark {
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  list-style: none;
+}
+
+.links a {
+  font-size: 0.9375rem;
+  color: var(--color-slate);
+  text-decoration: none;
+  padding-block: var(--space-sm);
+}
+
+.links a:hover,
+.links a:focus-visible {
+  color: var(--color-ink);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.phone {
+  font-size: 0.9375rem;
+  color: var(--color-slate);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.phone:hover,
+.phone:focus-visible {
+  color: var(--color-ink);
+}
+
+.cta {
+  composes: primary from "./Button.module.css";
+  white-space: nowrap;
+}
+
+.toggle {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .links {
+    display: none;
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    background-color: var(--color-cream);
+    border-bottom: 1px solid var(--color-hairline);
+    padding: var(--space-md) var(--container-padding);
+  }
+
+  .links[data-open="true"] {
+    display: flex;
+  }
+
+  .links a {
+    padding-block: var(--space-md);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .links a:last-child {
+    border-bottom: none;
+  }
+
+  .cta,
+  .phone {
+    display: none;
+  }
+
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    background: none;
+    color: var(--color-ink);
+    font-family: var(--font-body), sans-serif;
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+}
