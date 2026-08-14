@@ -15,6 +15,8 @@ this file or in git. Provisioned by `scripts/provision-acm-hotels-deploy.sh`
 - Host: _not yet provisioned_
 - Deploy user: _not yet provisioned_
 - SSH deploy key: _not yet provisioned_
+- Domain: `partners.acm-hotels.ru` — DNS A record _not yet provisioned_; routed
+  by the shared edge-proxy (Fuberg/edge-proxy) to this project's container
 
 ## GHCR (container registry)
 

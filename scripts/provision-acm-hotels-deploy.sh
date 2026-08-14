@@ -199,9 +199,9 @@ record_doc() {
   fi
 }
 
-TOTAL_STAGES=4
+TOTAL_STAGES=8
 
-banner "ACM Hotels — Sanity + deploy credentials (issue #3)"
+banner "ACM Hotels — deploy credentials + go live (issues #3, #5)"
 
 # ── Stage 1: Sanity project ────────────────────────────────────────────────
 stage "Sanity — project and dataset"
@@ -296,5 +296,63 @@ else
   say "Skipping — relying on the built-in GITHUB_TOKEN."
 fi
 record_doc "- Push access:" "$GHCR_NOTE"
+
+# ── Stage 5: DNS — subdomain for the ACM Hotels deploy ─────────────────────
+stage "DNS — A-запись для partners.acm-hotels.ru"
+say "Домен привязывается к серверу через shared edge-proxy (Fuberg/edge-proxy) — тот уже содержит site-блок для partners.acm-hotels.ru."
+open_url "https://cp.beget.com"
+step "Домены → acm-hotels.ru → раздел управления DNS-записями (название пункта меню зависит от текущего интерфейса Beget — ищите «DNS» или «Управление зоной», я не проверял этот экран вживую)."
+step "Добавьте A-запись: имя \"partners\" → значение ${SSH_HOST} (тот же IP, что и для SSH выше)."
+ask DOMAIN "Домен, который вы прописали [partners.acm-hotels.ru]:"
+DOMAIN="${DOMAIN:-partners.acm-hotels.ru}"
+pause "DNS-запись создана?"
+note "Распространение DNS может занять от нескольких минут до нескольких часов."
+write_env DOMAIN "$DOMAIN"
+set_var DOMAIN "$DOMAIN"
+record_doc "- Domain:" "- Domain: \`$DOMAIN\` — DNS A record → $SSH_HOST"
+
+# ── Stage 6: redeploy the shared edge-proxy ─────────────────────────────────
+stage "Редеплой shared edge-proxy (подхватить новый site-блок)"
+say "Caddyfile в Fuberg/edge-proxy уже содержит блок для ${DOMAIN} — его нужно применить на сервере, чтобы Caddy начал проксировать и выпустил TLS-сертификат."
+if confirm "Попробовать сделать это сейчас по SSH тем же ключом ACM Hotels (сработает, только если ${SSH_USER} также имеет доступ к /opt/edge-proxy)?"; then
+  if ssh -i "$SSH_KEY_PATH" -o BatchMode=yes -o ConnectTimeout=6 "${SSH_USER}@${SSH_HOST}" \
+       'cd /opt/edge-proxy && git pull && sudo docker compose up -d' >/dev/null 2>&1; then
+    say "${GREEN}✓ edge-proxy передеплоен${RESET}"
+  else
+    warn "не получилось автоматически (нет доступа к /opt/edge-proxy этим пользователем, или каталог называется иначе) — сделайте вручную:"
+    note "  ssh <тот-у-кого-есть-доступ>@${SSH_HOST} 'cd /opt/edge-proxy && git pull && sudo docker compose up -d'"
+    SKIPPED+=("Редеплой edge-proxy на сервере (cd /opt/edge-proxy && git pull && sudo docker compose up -d)")
+  fi
+else
+  SKIPPED+=("Редеплой edge-proxy на сервере (cd /opt/edge-proxy && git pull && sudo docker compose up -d)")
+fi
+
+# ── Stage 7: GHCR package visibility + trigger the Deploy workflow ─────────
+stage "GHCR — публичный пакет и запуск деплоя"
+PKG_NAME=$(printf '%s' "${REPO_SLUG#*/}" | tr '[:upper:]' '[:lower:]')
+say "docker compose pull на сервере не логинится в registry — пакет должен быть публичным, иначе pull упадёт с ошибкой авторизации."
+open_url "https://github.com/${REPO_SLUG}/pkgs/container/${PKG_NAME}"
+step "Package settings (внизу справа) → Danger Zone → Change visibility → Public."
+note "Если пакета ещё нет в списке — сначала должен отработать job build-and-push (он уже отрабатывал при прошлых push в main)."
+confirm "Пакет сделан публичным?" || warn "без этого 'docker compose pull' на сервере не сработает — вернитесь к этому шагу позже"
+
+say "Запускаю workflow Deploy заново, уже с секретами..."
+if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1 && gh workflow run deploy.yml >/dev/null 2>&1; then
+  say "${GREEN}✓ workflow запущен${RESET}"
+else
+  warn "не удалось запустить автоматически — запустите вручную: Actions → Deploy → Run workflow"
+fi
+open_url "https://github.com/${REPO_SLUG}/actions"
+confirm "Workflow 'Deploy' завершился успешно (build-and-push, deploy, verify — все зелёные)?" || warn "проверьте логи упавшего job'а; типичные причины — DNS ещё не применился или пакет ещё не публичный"
+
+# ── Stage 8: verify the live site ───────────────────────────────────────────
+stage "Проверка живого сайта"
+say "Проверяю https://${DOMAIN}..."
+if curl -fsS "https://${DOMAIN}/" 2>/dev/null | grep -q 'data-health-check="ok"'; then
+  say "${GREEN}✓ сайт отвечает и отдаёт health-check маркер${RESET}"
+else
+  warn "не смог получить маркер с https://${DOMAIN} — если DNS ещё не распространился или сертификат не выпустился, попробуйте позже: curl -sS https://${DOMAIN}/"
+fi
+open_url "https://${DOMAIN}"
 
 finish

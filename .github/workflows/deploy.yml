@@ -11,7 +11,9 @@ on:
 # The server also pulls without a registry login, so the GHCR package needs to
 # be set public after its first push — see docs/infrastructure.md.
 env:
-  ACM_DOMAIN: acm-hotels.ru
+  # vars.DOMAIN is set by scripts/provision-acm-hotels-deploy.sh (stage 5);
+  # the literal fallback only covers a run before that's ever been done.
+  ACM_DOMAIN: ${{ vars.DOMAIN || 'partners.acm-hotels.ru' }}
 
 jobs:
   build-and-push:
