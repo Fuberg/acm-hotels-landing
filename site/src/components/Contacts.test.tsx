@@ -43,6 +43,11 @@ const siteContentFixture: SiteContent = {
     contacts: { ru: "Контакты", en: "Contacts" },
   },
   properties: { portfolio: [], pipeline: [] },
+  cooperationModel: {
+    management: { title: { ru: "", en: "" }, description: { ru: "", en: "" } },
+    rental: { title: { ru: "", en: "" }, description: { ru: "", en: "" } },
+  },
+  operatorBase: { title: { ru: "", en: "" }, description: { ru: "", en: "" } },
 };
 
 describe("Contacts", () => {
