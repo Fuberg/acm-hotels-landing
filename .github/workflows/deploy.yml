@@ -1,0 +1,79 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+# Requires vars.SSH_HOST / vars.SSH_USER and secrets.DEPLOY_SSH_KEY, provisioned
+# by scripts/provision-acm-hotels-deploy.sh (issue #3) — see docs/infrastructure.md.
+# Until those are set, build-and-push succeeds but deploy/verify will fail.
+env:
+  ACM_DOMAIN: acm-hotels.ru
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.image.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compute lowercase image name
+        id: image
+        run: echo "image=ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./site
+          push: true
+          tags: ${{ steps.image.outputs.image }}:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ vars.SSH_HOST }}
+          username: ${{ vars.SSH_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          source: site/docker-compose.yml
+          target: /opt/acm-hotels
+          strip_components: 1
+      - uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ vars.SSH_HOST }}
+          username: ${{ vars.SSH_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd /opt/acm-hotels
+            sudo docker compose pull
+            sudo docker compose up -d --remove-orphans
+
+  verify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      # Post-deploy smoke check (ADR-0002): an HTTP-level check against the
+      # live public domain, asserting a successful response with expected
+      # marker content — not container/network internals.
+      - name: Check the live domain responds
+        run: |
+          for i in $(seq 1 10); do
+            if curl -fsS "https://${ACM_DOMAIN}/" | grep -q 'data-health-check="ok"'; then
+              echo "Health check passed"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying in 5s..."
+            sleep 5
+          done
+          echo "Health check failed after retries"
+          exit 1

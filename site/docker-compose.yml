@@ -1,0 +1,17 @@
+services:
+  web:
+    image: ghcr.io/fuberg/acm-hotels-landing:latest
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+    expose:
+      - "3000"
+    networks:
+      edge:
+        aliases:
+          - acm-hotels
+
+networks:
+  edge:
+    external: true
+    name: edge
