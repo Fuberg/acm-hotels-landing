@@ -24,7 +24,7 @@ const propertiesFixture: PropertiesContent = {
       status: "portfolio",
       image: {
         url: "https://cdn.sanity.io/images/skdlufghe66k2twbxmy2l1ii/production/anapa.jpg",
-        alt: { ru: "Отель Анапа", en: "Anapa Hotel photo" },
+        alt: { ru: "Фасад отеля с видом на море", en: "Hotel facade with a sea view" },
       },
     },
     {
@@ -114,6 +114,24 @@ describe("Properties", () => {
     expect(within(greenwichCard as HTMLElement).getByLabelText("Гринвич")).toHaveClass(
       "property-placeholder--pipeline",
     );
+  });
+
+  it("renders the uploaded photo in place of the placeholder once a property has an image", () => {
+    render(
+      <LocaleProvider>
+        <Properties properties={propertiesFixture} />
+      </LocaleProvider>,
+    );
+
+    // Anapa (portfolio, image set) gets the real photo, not the placeholder.
+    // The alt text deliberately differs from the property's name, so this
+    // assertion can only pass if it's sourced from image.alt — not a false
+    // positive from an implementation that mistakenly reused the name.
+    const anapaCard = screen.getByText("Отель Анапа").closest("[data-property-status]") as HTMLElement;
+    const photo = within(anapaCard).getByRole("img", { name: "Фасад отеля с видом на море" });
+
+    expect(photo.tagName).toBe("IMG");
+    expect(anapaCard.querySelector(".property-placeholder")).not.toBeInTheDocument();
   });
 
   it("renders the English copy once the locale switcher is set to EN", () => {
