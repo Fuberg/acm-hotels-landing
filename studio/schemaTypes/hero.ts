@@ -29,6 +29,8 @@ export default defineType({
     defineField({
       name: "image",
       title: "Изображение",
+      description:
+        "Необязательное поле — пока реальной фотографии фасада нет, страница показывает placeholder (DESIGN.md).",
       type: "image",
       options: { hotspot: true },
       fields: [
@@ -38,7 +40,6 @@ export default defineType({
           type: "localeString",
         }),
       ],
-      validation: (rule) => rule.required(),
     }),
   ],
   preview: {

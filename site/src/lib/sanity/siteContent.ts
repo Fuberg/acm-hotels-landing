@@ -26,7 +26,7 @@ export type HeroContent = {
   image: {
     url: string;
     alt: LocalizedString | null;
-  };
+  } | null;
 };
 
 export type StatItem = {
@@ -122,7 +122,7 @@ type RawHero = {
   image: {
     asset: { _ref: string; _type: "reference" };
     alt?: LocalizedString;
-  };
+  } | null;
 };
 
 type RawStatList = {
@@ -325,15 +325,17 @@ export async function getSiteContent(): Promise<SiteContent> {
       eyebrow: hero.eyebrow,
       headline: hero.headline,
       supportingCopy: hero.supportingCopy,
-      image: {
-        url: imageBuilder
-          .image(hero.image)
-          .width(HERO_IMAGE_DIMENSIONS.width)
-          .height(HERO_IMAGE_DIMENSIONS.height)
-          .fit("crop")
-          .url(),
-        alt: hero.image.alt ?? null,
-      },
+      image: hero.image
+        ? {
+            url: imageBuilder
+              .image(hero.image)
+              .width(HERO_IMAGE_DIMENSIONS.width)
+              .height(HERO_IMAGE_DIMENSIONS.height)
+              .fit("crop")
+              .url(),
+            alt: hero.image.alt ?? null,
+          }
+        : null,
     },
     stats: statList.stats,
     restaurantsFootnote,

@@ -36,3 +36,17 @@ body {
 .property-placeholder--pipeline {
   --placeholder-stripe: #e4dfd4;
 }
+
+/* Same placeholder convention for the Hero image — sage, since it's an
+   existing property (the company itself) whose facade photo is pending. */
+.hero-placeholder {
+  aspect-ratio: 16 / 9;
+  background-color: #fbfaf7;
+  background-image: repeating-linear-gradient(
+    45deg,
+    #dfe2db 0,
+    #dfe2db 2px,
+    transparent 2px,
+    transparent 12px
+  );
+}

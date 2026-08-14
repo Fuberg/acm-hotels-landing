@@ -12,13 +12,19 @@ export function Hero({ hero }: { hero: HeroContent }) {
       <p>{hero.eyebrow[locale]}</p>
       <h1 id="hero-headline">{hero.headline[locale]}</h1>
       <p>{hero.supportingCopy[locale]}</p>
-      <Image
-        src={hero.image.url}
-        alt={hero.image.alt?.[locale] ?? ""}
-        width={HERO_IMAGE_DIMENSIONS.width}
-        height={HERO_IMAGE_DIMENSIONS.height}
-        priority
-      />
+      {hero.image ? (
+        <Image
+          src={hero.image.url}
+          alt={hero.image.alt?.[locale] ?? ""}
+          width={HERO_IMAGE_DIMENSIONS.width}
+          height={HERO_IMAGE_DIMENSIONS.height}
+          priority
+        />
+      ) : (
+        // DESIGN.md's placeholder convention, same treatment Properties.tsx
+        // uses for an existing property whose photo hasn't been uploaded yet.
+        <div role="img" aria-label={hero.headline[locale]} className="hero-placeholder" />
+      )}
     </section>
   );
 }

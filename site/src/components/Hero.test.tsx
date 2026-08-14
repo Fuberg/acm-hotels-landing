@@ -72,7 +72,7 @@ describe("Hero", () => {
     expect(screen.getByRole("heading", { name: hero.headline.ru })).toBeInTheDocument();
     expect(screen.getByText(hero.eyebrow.ru)).toBeInTheDocument();
     expect(screen.getByText(hero.supportingCopy.ru)).toBeInTheDocument();
-    expect(screen.getByAltText(hero.image.alt!.ru)).toBeInTheDocument();
+    expect(screen.getByAltText(hero.image!.alt!.ru)).toBeInTheDocument();
   });
 
   it("renders the English copy once the locale switcher is set to EN", () => {
@@ -89,13 +89,13 @@ describe("Hero", () => {
     expect(screen.getByRole("heading", { name: hero.headline.en })).toBeInTheDocument();
     expect(screen.getByText(hero.eyebrow.en)).toBeInTheDocument();
     expect(screen.getByText(hero.supportingCopy.en)).toBeInTheDocument();
-    expect(screen.getByAltText(hero.image.alt!.en)).toBeInTheDocument();
+    expect(screen.getByAltText(hero.image!.alt!.en)).toBeInTheDocument();
   });
 
   it("falls back to an empty alt when no alt text is set", () => {
     const siteContent: SiteContent = {
       ...siteContentFixture,
-      hero: { ...siteContentFixture.hero, image: { ...siteContentFixture.hero.image, alt: null } },
+      hero: { ...siteContentFixture.hero, image: { ...siteContentFixture.hero.image!, alt: null } },
     };
     render(
       <LocaleProvider>
@@ -104,5 +104,20 @@ describe("Hero", () => {
     );
 
     expect(screen.getByAltText("")).toBeInTheDocument();
+  });
+
+  it("falls back to a placeholder when no hero image is uploaded yet", () => {
+    const siteContent: SiteContent = {
+      ...siteContentFixture,
+      hero: { ...siteContentFixture.hero, image: null },
+    };
+    render(
+      <LocaleProvider>
+        <Hero hero={siteContent.hero} />
+      </LocaleProvider>,
+    );
+
+    const { hero } = siteContent;
+    expect(screen.getByRole("img", { name: hero.headline.ru })).toHaveClass("hero-placeholder");
   });
 });
