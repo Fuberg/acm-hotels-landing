@@ -79,6 +79,8 @@ export type PropertyContent = {
     url: string;
     alt: LocalizedString | null;
   } | null;
+  starRating: number | null;
+  expectedOpening: LocalizedString | null;
 };
 
 export type PropertiesContent = {
@@ -136,6 +138,8 @@ type RawProperty = {
     asset: { _ref: string; _type: "reference" };
     alt?: LocalizedString;
   } | null;
+  starRating: number | null;
+  expectedOpening: LocalizedString | null;
 };
 
 const heroQuery = `*[_type == "hero" && _id == "hero"][0]{
@@ -177,7 +181,7 @@ const operatorBaseQuery = `*[_type == "operatorBaseCard" && _id == "operatorBase
 // Ordered ascending by `order` so grouping by status below preserves the
 // Admin's chosen ordering within each group.
 const propertiesQuery = `*[_type == "property"] | order(order asc) {
-  _id, name, description, status, image
+  _id, name, description, status, image, starRating, expectedOpening
 }`;
 
 const imageBuilder = imageUrlBuilder(sanityClient);
@@ -312,6 +316,8 @@ export async function getSiteContent(): Promise<SiteContent> {
           alt: property.image.alt ?? null,
         }
       : null,
+    starRating: property.starRating ?? null,
+    expectedOpening: property.expectedOpening ?? null,
   }));
 
   return {

@@ -26,6 +26,8 @@ const propertiesFixture: PropertiesContent = {
         url: "https://cdn.sanity.io/images/skdlufghe66k2twbxmy2l1ii/production/anapa.jpg",
         alt: { ru: "Фасад отеля с видом на море", en: "Hotel facade with a sea view" },
       },
+      starRating: null,
+      expectedOpening: null,
     },
     {
       _id: "prop-sochi",
@@ -33,6 +35,8 @@ const propertiesFixture: PropertiesContent = {
       description: { ru: "Второй отель портфеля.", en: "The portfolio's second hotel." },
       status: "portfolio",
       image: null,
+      starRating: 4,
+      expectedOpening: null,
     },
   ],
   pipeline: [
@@ -42,6 +46,8 @@ const propertiesFixture: PropertiesContent = {
       description: { ru: "Строится.", en: "Under construction." },
       status: "pipeline",
       image: null,
+      starRating: null,
+      expectedOpening: { ru: "2027 год", en: "2027" },
     },
   ],
 };
@@ -149,6 +155,46 @@ describe("Properties", () => {
     expect(screen.getByText("Anapa Hotel")).toBeInTheDocument();
     expect(screen.getByText("Greenwich")).toBeInTheDocument();
     expect(screen.getByText("The portfolio's first hotel.")).toBeInTheDocument();
+  });
+
+  it("renders a Portfolio property's star rating when set, per issue #1 story 11", () => {
+    render(
+      <LocaleProvider>
+        <Properties properties={propertiesFixture} />
+      </LocaleProvider>,
+    );
+
+    const sochiCard = screen.getByText("Отель Сочи").closest("[data-property-status]") as HTMLElement;
+    expect(within(sochiCard).getByText("★★★★")).toBeInTheDocument();
+
+    // Anapa has no starRating fixture value ("where relevant" per the story) — no stars render.
+    const anapaCard = screen.getByText("Отель Анапа").closest("[data-property-status]") as HTMLElement;
+    expect(within(anapaCard).queryByText(/★/)).not.toBeInTheDocument();
+  });
+
+  it("renders a Pipeline property's expected opening when set, per issue #1 story 12", () => {
+    render(
+      <LocaleProvider>
+        <Properties properties={propertiesFixture} />
+      </LocaleProvider>,
+    );
+
+    const greenwichCard = screen.getByText("Гринвич").closest("[data-property-status]") as HTMLElement;
+    expect(within(greenwichCard).getByText("Открытие: 2027 год")).toBeInTheDocument();
+  });
+
+  it("renders the expected opening's English copy once the locale switcher is set to EN", () => {
+    render(
+      <LocaleProvider>
+        <LocaleSwitcher />
+        <Properties properties={propertiesFixture} />
+      </LocaleProvider>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "EN" }));
+
+    const greenwichCard = screen.getByText("Greenwich").closest("[data-property-status]") as HTMLElement;
+    expect(within(greenwichCard).getByText("Opening: 2027")).toBeInTheDocument();
   });
 
   it("renders an empty group without error when a status has no properties yet", () => {

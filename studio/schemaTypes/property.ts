@@ -43,6 +43,20 @@ export default defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "starRating",
+      title: "Рейтинг (звёзды)",
+      description: "Необязательное поле — заполняется только там, где применимо (например, для отеля с официальной звёздностью).",
+      type: "number",
+      validation: (rule) => rule.integer().min(1).max(5),
+    }),
+    defineField({
+      name: "expectedOpening",
+      title: "Ожидаемая дата открытия",
+      description:
+        "Свободный текст (например «2027» или «Q4 2027»), так как точная дата обычно не известна заранее.",
+      type: "localeString",
+    }),
+    defineField({
       name: "image",
       title: "Изображение",
       // Optional, unlike Hero's — a Pipeline property may not have

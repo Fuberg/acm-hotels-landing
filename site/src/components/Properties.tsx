@@ -15,6 +15,15 @@ const GROUP_LABELS = {
 
 const SECTION_HEADLINE = { ru: "Наши объекты", en: "Our properties" };
 
+// Screen readers shouldn't read out repeated "★" glyphs one by one — this
+// gives the star row an accessible name instead (issue #1 story 11).
+const STAR_RATING_LABEL = {
+  ru: (rating: number) => `${rating} из 5 звёзд`,
+  en: (rating: number) => `${rating} out of 5 stars`,
+} as const;
+
+const EXPECTED_OPENING_LABEL = { ru: "Открытие", en: "Opening" };
+
 function PropertyCard({ property }: { property: PropertyContent }) {
   const { locale } = useLocale();
   const name = property.name[locale];
@@ -41,6 +50,16 @@ function PropertyCard({ property }: { property: PropertyContent }) {
       )}
       <h3>{name}</h3>
       <p>{property.description[locale]}</p>
+      {property.starRating ? (
+        <p aria-label={STAR_RATING_LABEL[locale](property.starRating)}>
+          {"★".repeat(property.starRating)}
+        </p>
+      ) : null}
+      {property.expectedOpening ? (
+        <p>
+          {EXPECTED_OPENING_LABEL[locale]}: {property.expectedOpening[locale]}
+        </p>
+      ) : null}
     </li>
   );
 }
