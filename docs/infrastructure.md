@@ -30,9 +30,8 @@ this file or in git. Provisioned by `scripts/provision-acm-hotels-deploy.sh`
 - Push access: `default_workflow_permissions` on the repo is `read`, but the
   workflow declares `permissions: packages: write` at the job level, which
   overrides it — confirmed working (`build-and-push` has succeeded).
-- Pull access: the deploy server's `docker compose pull` (issue #5's workflow)
-  runs without a registry login, so the `ghcr.io/fuberg/acm-hotels-landing`
-  package must be set **public** after its first push (package page → Package
-  settings → Danger Zone → Change visibility), the same way tic-tac-toe-online's
-  package was handled — otherwise the pull on the server fails with an auth
-  error.
+- Pull access: `ghcr.io/fuberg/acm-hotels-landing` is set **public** (Package
+  settings → Danger Zone → Change visibility), same as tic-tac-toe-online's
+  package — the deploy server's unauthenticated `docker compose pull` works.
+  Confirmed: full `Deploy` workflow (build-and-push → deploy → verify) green
+  end-to-end, `https://partners.acm-hotels.ru` returns 200.
