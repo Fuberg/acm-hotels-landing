@@ -30,6 +30,10 @@ export type HeroContent = {
 };
 
 export type StatItem = {
+  // Sanity's auto-assigned array-member key, projected through so the
+  // rendered list can key on something stable across Studio reorders
+  // instead of array index.
+  _key: string;
   value: string;
   caption: LocalizedString;
 };
@@ -139,7 +143,7 @@ const heroQuery = `*[_type == "hero" && _id == "hero"][0]{
 }`;
 
 const statListQuery = `*[_type == "statList" && _id == "statList"][0]{
-  stats[]{ value, caption }
+  stats[]{ _key, value, caption }
 }`;
 
 const restaurantsFootnoteQuery = `*[_type == "restaurantsFootnote" && _id == "restaurantsFootnote"][0]{

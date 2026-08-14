@@ -15,10 +15,10 @@ const siteContentFixture: SiteContent = {
     image: { url: "https://cdn.sanity.io/images/skdlufghe66k2twbxmy2l1ii/production/hero.jpg", alt: null },
   },
   stats: [
-    { value: "330", caption: { ru: "номеров под управлением", en: "rooms under management" } },
-    { value: "+260", caption: { ru: "номеров строится", en: "rooms coming" } },
-    { value: "95%", caption: { ru: "загрузка", en: "occupancy" } },
-    { value: "20", caption: { ru: "лет в гостеприимстве", en: "years in hospitality" } },
+    { _key: "a", value: "330", caption: { ru: "номеров под управлением", en: "rooms under management" } },
+    { _key: "b", value: "+260", caption: { ru: "номеров строится", en: "rooms coming" } },
+    { _key: "c", value: "95%", caption: { ru: "загрузка", en: "occupancy" } },
+    { _key: "d", value: "20", caption: { ru: "лет в гостеприимстве", en: "years in hospitality" } },
   ],
   restaurantsFootnote: {
     label: { ru: "Рестораны под управлением", en: "Restaurants under management" },
@@ -48,6 +48,11 @@ const siteContentFixture: SiteContent = {
     contacts: { ru: "Контакты", en: "Contacts" },
   },
   properties: { portfolio: [], pipeline: [] },
+  cooperationModel: {
+    management: { title: { ru: "", en: "" }, description: { ru: "", en: "" } },
+    rental: { title: { ru: "", en: "" }, description: { ru: "", en: "" } },
+  },
+  operatorBase: { title: { ru: "", en: "" }, description: { ru: "", en: "" } },
 };
 
 describe("Stats", () => {
