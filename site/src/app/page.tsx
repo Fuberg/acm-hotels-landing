@@ -1,5 +1,12 @@
+import { Contacts } from "@/components/Contacts";
+import { CooperationCards } from "@/components/CooperationCards";
+import { ExpansionBand } from "@/components/ExpansionBand";
 import { Hero } from "@/components/Hero";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
+import { Nav } from "@/components/Nav";
+import { Properties } from "@/components/Properties";
+import { RestaurantsFootnote } from "@/components/RestaurantsFootnote";
+import { Stats } from "@/components/Stats";
 import { getSiteContent, type SiteContent } from "@/lib/sanity/siteContent";
 
 // Marker attribute the deploy workflow's post-deploy check greps for
@@ -19,7 +26,19 @@ export default async function Home() {
     <main data-health-check="ok">
       <LocaleSwitcher />
       {siteContent ? (
-        <Hero hero={siteContent.hero} />
+        <>
+          <Nav navigation={siteContent.navigation} />
+          <Hero hero={siteContent.hero} />
+          <Stats stats={siteContent.stats} />
+          <CooperationCards
+            cooperationModel={siteContent.cooperationModel}
+            operatorBase={siteContent.operatorBase}
+          />
+          <Properties properties={siteContent.properties} />
+          <RestaurantsFootnote restaurantsFootnote={siteContent.restaurantsFootnote} />
+          <ExpansionBand expansionBand={siteContent.expansionBand} />
+          <Contacts contacts={siteContent.contacts} />
+        </>
       ) : (
         <p>Сайт в разработке.</p>
       )}

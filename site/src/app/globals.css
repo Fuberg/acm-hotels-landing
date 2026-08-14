@@ -12,3 +12,27 @@ body {
 body {
   font-family: system-ui, sans-serif;
 }
+
+/* DESIGN.md's diagonal-stripe placeholder convention: sage marks an
+   existing property whose photo hasn't been uploaded yet, sand marks a
+   Pipeline property that isn't built yet. Replaced by real photography as
+   Admins upload it — see studio/schemaTypes/property.ts. */
+.property-placeholder {
+  aspect-ratio: 4 / 3;
+  background-color: #fbfaf7;
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--placeholder-stripe) 0,
+    var(--placeholder-stripe) 2px,
+    transparent 2px,
+    transparent 12px
+  );
+}
+
+.property-placeholder--portfolio {
+  --placeholder-stripe: #dfe2db;
+}
+
+.property-placeholder--pipeline {
+  --placeholder-stripe: #e4dfd4;
+}
