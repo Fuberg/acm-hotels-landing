@@ -4,6 +4,9 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
+      # Read from a .env file the deploy workflow writes alongside this file
+      # on the server — never committed here. See .github/workflows/deploy.yml.
+      SANITY_REVALIDATE_SECRET: ${SANITY_REVALIDATE_SECRET}
     expose:
       - "3000"
     networks:

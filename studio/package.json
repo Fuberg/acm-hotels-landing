@@ -1,0 +1,22 @@
+{
+  "name": "acm-hotels-studio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "deploy": "sanity deploy",
+    "start": "sanity start"
+  },
+  "dependencies": {
+    "@sanity/vision": "^6.9.2",
+    "react": "^19",
+    "react-dom": "^19",
+    "sanity": "^6.9.2",
+    "styled-components": "^6.5.2"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "typescript": "^5"
+  }
+}
