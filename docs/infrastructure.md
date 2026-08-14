@@ -19,3 +19,9 @@ this file or in git. Provisioned by `scripts/provision-acm-hotels-deploy.sh`
 ## GHCR (container registry)
 
 - Push access: _not yet confirmed_
+- Pull access: the deploy server's `docker compose pull` (issue #5's workflow)
+  runs without a registry login, so the `ghcr.io/fuberg/acm-hotels-landing`
+  package must be set **public** after its first push (package page → Package
+  settings → Danger Zone → Change visibility), the same way tic-tac-toe-online's
+  package was handled — otherwise the pull on the server fails with an auth
+  error.

@@ -8,6 +8,8 @@ on:
 # Requires vars.SSH_HOST / vars.SSH_USER and secrets.DEPLOY_SSH_KEY, provisioned
 # by scripts/provision-acm-hotels-deploy.sh (issue #3) — see docs/infrastructure.md.
 # Until those are set, build-and-push succeeds but deploy/verify will fail.
+# The server also pulls without a registry login, so the GHCR package needs to
+# be set public after its first push — see docs/infrastructure.md.
 env:
   ACM_DOMAIN: acm-hotels.ru
 
