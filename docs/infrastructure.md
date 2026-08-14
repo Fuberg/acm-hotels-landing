@@ -17,6 +17,17 @@ this file or in git. Provisioned by `scripts/provision-acm-hotels-deploy.sh`
   POST to `https://partners.acm-hotels.ru/api/revalidate` on
   create/update/delete, signed with the `SANITY_REVALIDATE_SECRET` GitHub
   Actions secret (issue #6).
+- Runtime read token: the dataset's anonymous-read grant is `_id in
+  path("**")`, which does not match document ids containing a `.` — so any
+  fixed singleton id following this schema's `cooperationModel.management`
+  convention (also affects `property.*` custom ids) is invisible to
+  unauthenticated reads, indefinitely, not just as a propagation delay.
+  Discovered when the site kept showing its "not published yet" fallback
+  after content existed and was confirmed fresh via a direct authenticated
+  query. Fixed with a dedicated read-only (Viewer role) API token, stored as
+  the `SANITY_API_TOKEN` GitHub Actions secret and passed to the server-side
+  Sanity client (`site/src/lib/sanity/client.ts`) — not `NEXT_PUBLIC_`, since
+  it must never reach the client bundle.
 
 ## Deploy server (Beget)
 

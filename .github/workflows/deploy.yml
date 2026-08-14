@@ -13,6 +13,10 @@ on:
 # Also requires vars.SANITY_PROJECT_ID / vars.SANITY_DATASET (non-secret) and
 # secrets.SANITY_REVALIDATE_SECRET (issue #6) — the latter must match the
 # secret configured on the Sanity webhook that POSTs to /api/revalidate.
+# secrets.SANITY_API_TOKEN is a read-only (Viewer) token: the dataset's
+# anonymous-read grant can't see documents whose _id contains a "." (e.g.
+# "cooperationModel.management"), so the server-side Sanity client needs an
+# authenticated read to see those — see docs/infrastructure.md.
 env:
   # vars.DOMAIN is set by scripts/provision-acm-hotels-deploy.sh (stage 5);
   # the literal fallback only covers a run before that's ever been done.
@@ -63,14 +67,16 @@ jobs:
           host: ${{ vars.SSH_HOST }}
           username: ${{ vars.SSH_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
-          envs: SANITY_REVALIDATE_SECRET
+          envs: SANITY_REVALIDATE_SECRET,SANITY_API_TOKEN
           script: |
             cd /opt/acm-hotels
             echo "SANITY_REVALIDATE_SECRET=${SANITY_REVALIDATE_SECRET}" > .env
+            echo "SANITY_API_TOKEN=${SANITY_API_TOKEN}" >> .env
             sudo docker compose pull
             sudo docker compose up -d --remove-orphans
         env:
           SANITY_REVALIDATE_SECRET: ${{ secrets.SANITY_REVALIDATE_SECRET }}
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
 
   verify:
     needs: deploy

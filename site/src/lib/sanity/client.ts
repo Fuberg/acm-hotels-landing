@@ -15,5 +15,14 @@ export const sanityClient = createClient({
   projectId,
   dataset,
   apiVersion: "2024-01-01",
-  useCdn: true,
+  // The app already caches reads through Next's own fetch-tag cache and
+  // invalidates it on-demand via the publish webhook (see siteContent.ts,
+  // api/revalidate). Sanity's CDN is a second, independent cache with its
+  // own eventual-consistency window that fights that guarantee.
+  useCdn: false,
+  // Anonymous reads are denied for documents whose _id contains a "." (the
+  // dataset's public-read grant is a path("**") match, which doesn't span
+  // that boundary) — affects the fixed singleton ids this schema relies on,
+  // e.g. "cooperationModel.management". A read-only token sidesteps that.
+  token: process.env.SANITY_API_TOKEN,
 });

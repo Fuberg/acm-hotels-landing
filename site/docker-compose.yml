@@ -7,6 +7,7 @@ services:
       # Read from a .env file the deploy workflow writes alongside this file
       # on the server — never committed here. See .github/workflows/deploy.yml.
       SANITY_REVALIDATE_SECRET: ${SANITY_REVALIDATE_SECRET}
+      SANITY_API_TOKEN: ${SANITY_API_TOKEN}
     expose:
       - "3000"
     networks:
