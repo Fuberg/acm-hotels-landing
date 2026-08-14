@@ -13,6 +13,11 @@ import { getSiteContent, type SiteContent } from "@/lib/sanity/siteContent";
 
 const FALLBACK_COPY = { ru: "Сайт в разработке.", en: "Site under construction." };
 
+// Safety net alongside the on-demand webhook (api/revalidate): if that
+// webhook ever misfires, this page still self-heals within an hour instead
+// of serving a stale build-time fallback indefinitely.
+export const revalidate = 3600;
+
 // Marker attribute the deploy workflow's post-deploy check greps for
 // (.github/workflows/deploy.yml) — keep it in sync if this changes.
 export default async function Home({ params }: PageProps<"/[lang]">) {

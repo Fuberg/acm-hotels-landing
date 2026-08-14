@@ -27,7 +27,15 @@ ARG NEXT_PUBLIC_SANITY_PROJECT_ID
 ARG NEXT_PUBLIC_SANITY_DATASET
 ENV NEXT_PUBLIC_SANITY_PROJECT_ID=${NEXT_PUBLIC_SANITY_PROJECT_ID}
 ENV NEXT_PUBLIC_SANITY_DATASET=${NEXT_PUBLIC_SANITY_DATASET}
-RUN npm run build
+# generateStaticParams (app/[lang]) makes this route prerender at build
+# time, and the dataset's anonymous-read grant can't see singleton
+# documents whose _id contains a "." (e.g. "cooperationModel.management") —
+# see docs/infrastructure.md. Without an authenticated read here, the build
+# silently bakes in the "site under construction" fallback. Passed as a
+# BuildKit secret (not --build-arg) so the read-only token never touches an
+# image layer, not even this intermediate builder stage.
+RUN --mount=type=secret,id=sanity_api_token \
+    SANITY_API_TOKEN="$(cat /run/secrets/sanity_api_token 2>/dev/null || true)" npm run build
 
 # ---- Run ----
 FROM base AS runner
